@@ -19,7 +19,7 @@ import { lessons } from '../data/lessons';
           </p>
         </div>
         <div class="flex flex-wrap gap-3">
-          <a class="rounded-2xl bg-sky-400 px-5 py-3 font-semibold text-slate-950 transition hover:bg-sky-300" href="/qa-fintech-api-python-course/platform/lessons/01-fintech-qa/">
+          <a class="rounded-2xl bg-sky-400 px-5 py-3 font-semibold text-slate-950 transition hover:bg-sky-300" href="/qa-fintech-api-python-course/lessons/01-fintech-qa/">
             Начать курс
           </a>
           <a class="rounded-2xl border border-slate-600 px-5 py-3 font-semibold text-slate-100 transition hover:border-sky-300 hover:text-sky-200" href="https://github.com/safal207/qa-fintech-api-python-course" target="_blank">
@@ -43,7 +43,7 @@ import { lessons } from '../data/lessons';
 
     <section class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       {lessons.map((lesson, index) => (
-        <a class="group rounded-[1.5rem] border border-slate-700/70 bg-slate-900/60 p-5 transition hover:-translate-y-1 hover:border-sky-300/70 hover:bg-slate-900" href={`/qa-fintech-api-python-course/platform/lessons/${lesson.slug}/`}>
+        <a class="group rounded-[1.5rem] border border-slate-700/70 bg-slate-900/60 p-5 transition hover:-translate-y-1 hover:border-sky-300/70 hover:bg-slate-900" href={`/qa-fintech-api-python-course/lessons/${lesson.slug}/`}>
           <div class="flex items-center justify-between gap-4">
             <span class="rounded-full bg-slate-800 px-3 py-1 text-sm text-slate-300">{String(index + 1).padStart(2, '0')}</span>
             <span class="text-sm text-mint">{lesson.tag}</span>
