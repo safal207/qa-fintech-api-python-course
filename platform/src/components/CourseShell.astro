@@ -7,7 +7,7 @@ const title = Astro.props.title || siteName;
 const description = Astro.props.description || 'Интерактивный курс по QA в финтехе: API-тестирование, Python, Pytest, idempotency, contract testing, CI и Allure.';
 const pathname = Astro.props.pathname || '/';
 const canonicalPath = pathname.startsWith('/') ? pathname : `/${pathname}`;
-const canonicalUrl = `${siteRoot}${canonicalPath}`.replace(/\/$/, '/') ;
+const canonicalUrl = `${siteRoot}${canonicalPath}`.replace(/\/$/, '/');
 const ogTitle = Astro.props.ogTitle || title;
 const ogType = Astro.props.ogType || 'website';
 ---
@@ -22,6 +22,7 @@ const ogType = Astro.props.ogType || 'website';
 
     <title>{title}</title>
     <link rel="canonical" href={canonicalUrl} />
+    <link rel="manifest" href="/qa-fintech-api-python-course/site.webmanifest" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2307111f'/%3E%3Cpath d='M14 36h9l5-16 8 26 5-16h9' fill='none' stroke='%2338bdf8' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
 
     <meta property="og:site_name" content={siteName} />
