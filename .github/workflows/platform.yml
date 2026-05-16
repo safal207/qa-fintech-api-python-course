@@ -1,0 +1,35 @@
+name: Platform CI
+
+on:
+  push:
+    branches: [main, platform/astro-course-mvp]
+    paths:
+      - 'platform/**'
+      - '.github/workflows/platform.yml'
+  pull_request:
+    paths:
+      - 'platform/**'
+      - '.github/workflows/platform.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: platform
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build platform
+        run: npm run build

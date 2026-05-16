@@ -1,0 +1,15 @@
+---
+import '../styles/global.css';
+const title = Astro.props.title || 'QA FinTech Course Platform';
+---
+
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
