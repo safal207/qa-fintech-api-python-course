@@ -1,0 +1,9 @@
+services:
+  finpay-api:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: bash -c "pip install -r requirements.txt && uvicorn src.finpay_sandbox.api:app --host 0.0.0.0 --port 8000"
+    ports:
+      - "8000:8000"
