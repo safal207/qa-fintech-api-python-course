@@ -36,6 +36,10 @@ jobs:
       - name: Run desktop Lighthouse audit
         run: npm run lhci:desktop
 
+      - name: Print Lighthouse score summary
+        if: always()
+        run: npm run lhci:summary
+
       - name: Upload Lighthouse reports
         if: always()
         uses: actions/upload-artifact@v4
