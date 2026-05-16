@@ -1,16 +1,6 @@
 ---
 import CourseShell from '../components/CourseShell.astro';
-
-const modules = [
-  { slug: '01-fintech-qa', title: 'FinTech QA mindset', tag: 'Risk thinking' },
-  { slug: '02-local-setup', title: 'Local setup', tag: 'Environment' },
-  { slug: '03-sandbox-api', title: 'Sandbox API', tag: 'FastAPI' },
-  { slug: '04-transfer-tests', title: 'Transfer tests', tag: 'Pytest' },
-  { slug: '05-idempotency', title: 'Idempotency', tag: 'Money safety' },
-  { slug: '06-contract-tests', title: 'Contract tests', tag: 'JSON Schema' },
-  { slug: '07-ci-allure', title: 'CI and Allure', tag: 'Automation' },
-  { slug: '08-final-project', title: 'Final project', tag: 'Portfolio' },
-];
+import { lessons } from '../data/lessons';
 ---
 
 <CourseShell title="QA FinTech Course Platform">
@@ -52,13 +42,13 @@ const modules = [
     </section>
 
     <section class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {modules.map((module, index) => (
-        <a class="group rounded-[1.5rem] border border-slate-700/70 bg-slate-900/60 p-5 transition hover:-translate-y-1 hover:border-sky-300/70 hover:bg-slate-900" href={`/qa-fintech-api-python-course/platform/lessons/${module.slug}/`}>
+      {lessons.map((lesson, index) => (
+        <a class="group rounded-[1.5rem] border border-slate-700/70 bg-slate-900/60 p-5 transition hover:-translate-y-1 hover:border-sky-300/70 hover:bg-slate-900" href={`/qa-fintech-api-python-course/platform/lessons/${lesson.slug}/`}>
           <div class="flex items-center justify-between gap-4">
             <span class="rounded-full bg-slate-800 px-3 py-1 text-sm text-slate-300">{String(index + 1).padStart(2, '0')}</span>
-            <span class="text-sm text-mint">{module.tag}</span>
+            <span class="text-sm text-mint">{lesson.tag}</span>
           </div>
-          <h3 class="mt-5 text-xl font-semibold text-white group-hover:text-sky-200">{module.title}</h3>
+          <h3 class="mt-5 text-xl font-semibold text-white group-hover:text-sky-200">{lesson.title}</h3>
         </a>
       ))}
     </section>
