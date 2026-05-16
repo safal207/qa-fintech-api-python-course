@@ -10,7 +10,6 @@ module.exports = {
       ],
       numberOfRuns: 1,
       settings: {
-        preset: 'mobile',
         throttlingMethod: 'simulate',
         chromeFlags: '--no-sandbox --disable-dev-shm-usage',
       },
