@@ -6,5 +6,5 @@ import tailwind from '@astrojs/tailwind';
 export default defineConfig({
   integrations: [mdx(), react(), tailwind()],
   site: 'https://safal207.github.io',
-  base: '/qa-fintech-api-python-course/platform/',
+  base: '/qa-fintech-api-python-course/',
 });
