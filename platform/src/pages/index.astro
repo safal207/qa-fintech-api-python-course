@@ -4,34 +4,34 @@ import { lessons } from '../data/lessons';
 ---
 
 <CourseShell title="QA FinTech Course Platform">
-  <main class="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-10 px-6 py-8 lg:px-10">
-    <section class="grid gap-8 rounded-[2rem] border border-slate-700/60 bg-slate-950/50 p-8 shadow-soft backdrop-blur lg:grid-cols-[1.2fr_0.8fr] lg:p-12">
-      <div class="space-y-7">
-        <p class="inline-flex rounded-full border border-sky-400/30 bg-sky-400/10 px-4 py-2 text-sm font-medium text-sky-200">
+  <main class="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-6 px-4 py-4 safe-bottom sm:gap-8 sm:px-6 sm:py-6 lg:gap-10 lg:px-10 lg:py-8">
+    <section class="grid gap-6 rounded-[1.5rem] border border-slate-700/60 bg-slate-950/50 p-5 shadow-soft backdrop-blur sm:rounded-[2rem] sm:p-8 lg:grid-cols-[1.2fr_0.8fr] lg:p-12">
+      <div class="space-y-5 sm:space-y-7">
+        <p class="inline-flex rounded-full border border-sky-400/30 bg-sky-400/10 px-3 py-2 text-xs font-medium text-sky-200 sm:px-4 sm:text-sm">
           Interactive course platform
         </p>
-        <div class="space-y-4">
-          <h1 class="max-w-4xl text-4xl font-semibold tracking-tight text-white md:text-6xl">
+        <div class="space-y-3 sm:space-y-4">
+          <h1 class="max-w-4xl text-3xl font-semibold tracking-tight text-white sm:text-4xl md:text-6xl">
             QA в финтехе: API-тестирование и автоматизация на Python
           </h1>
-          <p class="max-w-2xl text-lg leading-8 text-slate-300">
-            Пошаговый маршрут: понять финтех-риск, запустить sandbox API, написать Pytest-проверки, добавить контрактные тесты, CI и финальный GitHub-проект.
+          <p class="max-w-2xl text-base leading-7 text-slate-300 sm:text-lg sm:leading-8">
+            Пошаговый маршрут для телефона: финтех-риск, sandbox API, Pytest-проверки, контрактные тесты, CI и финальный GitHub-проект.
           </p>
         </div>
-        <div class="flex flex-wrap gap-3">
-          <a class="rounded-2xl bg-sky-400 px-5 py-3 font-semibold text-slate-950 transition hover:bg-sky-300" href="/qa-fintech-api-python-course/lessons/01-fintech-qa/">
+        <div class="grid gap-3 sm:flex sm:flex-wrap">
+          <a class="flex min-h-12 items-center justify-center rounded-2xl bg-sky-400 px-5 py-3 text-center font-semibold text-slate-950 transition hover:bg-sky-300" href="/qa-fintech-api-python-course/lessons/01-fintech-qa/">
             Начать курс
           </a>
-          <a class="rounded-2xl border border-slate-600 px-5 py-3 font-semibold text-slate-100 transition hover:border-sky-300 hover:text-sky-200" href="https://github.com/safal207/qa-fintech-api-python-course" target="_blank">
+          <a class="flex min-h-12 items-center justify-center rounded-2xl border border-slate-600 px-5 py-3 text-center font-semibold text-slate-100 transition hover:border-sky-300 hover:text-sky-200" href="https://github.com/safal207/qa-fintech-api-python-course" target="_blank">
             Открыть GitHub
           </a>
         </div>
       </div>
 
-      <aside class="rounded-[1.5rem] border border-slate-700/70 bg-slate-900/70 p-6">
-        <p class="text-sm uppercase tracking-[0.25em] text-slate-400">Course outcome</p>
-        <h2 class="mt-4 text-2xl font-semibold text-white">Portfolio-ready fintech QA project</h2>
-        <ul class="mt-6 space-y-3 text-slate-300">
+      <aside class="rounded-[1.25rem] border border-slate-700/70 bg-slate-900/70 p-5 sm:rounded-[1.5rem] sm:p-6">
+        <p class="text-xs uppercase tracking-[0.22em] text-slate-400 sm:text-sm">Course outcome</p>
+        <h2 class="mt-3 text-xl font-semibold text-white sm:mt-4 sm:text-2xl">Portfolio-ready fintech QA project</h2>
+        <ul class="mt-5 space-y-3 text-sm leading-6 text-slate-300 sm:mt-6 sm:text-base">
           <li>✓ Sandbox API with accounts and transfers</li>
           <li>✓ Pytest checks for balances and fees</li>
           <li>✓ Idempotency test against double charge</li>
@@ -41,14 +41,14 @@ import { lessons } from '../data/lessons';
       </aside>
     </section>
 
-    <section class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <section class="mobile-scroll -mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-2 md:mx-0 md:grid md:grid-cols-2 md:gap-4 md:overflow-visible md:px-0 lg:grid-cols-4">
       {lessons.map((lesson, index) => (
-        <a class="group rounded-[1.5rem] border border-slate-700/70 bg-slate-900/60 p-5 transition hover:-translate-y-1 hover:border-sky-300/70 hover:bg-slate-900" href={`/qa-fintech-api-python-course/lessons/${lesson.slug}/`}>
+        <a class="group min-w-[78vw] snap-start rounded-[1.25rem] border border-slate-700/70 bg-slate-900/60 p-4 transition hover:-translate-y-1 hover:border-sky-300/70 hover:bg-slate-900 sm:min-w-[320px] sm:p-5 md:min-w-0 md:rounded-[1.5rem]" href={`/qa-fintech-api-python-course/lessons/${lesson.slug}/`}>
           <div class="flex items-center justify-between gap-4">
             <span class="rounded-full bg-slate-800 px-3 py-1 text-sm text-slate-300">{String(index + 1).padStart(2, '0')}</span>
             <span class="text-sm text-mint">{lesson.tag}</span>
           </div>
-          <h3 class="mt-5 text-xl font-semibold text-white group-hover:text-sky-200">{lesson.title}</h3>
+          <h3 class="mt-4 text-lg font-semibold text-white group-hover:text-sky-200 sm:mt-5 sm:text-xl">{lesson.title}</h3>
         </a>
       ))}
     </section>
