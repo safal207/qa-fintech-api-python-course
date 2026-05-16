@@ -15,10 +15,10 @@ const next = lessons[currentIndex + 1];
 <CourseShell title={`${lesson.title} | QA FinTech Course`}>
   <main class="mx-auto grid min-h-screen w-full max-w-7xl gap-6 px-6 py-8 lg:grid-cols-[280px_1fr] lg:px-10">
     <aside class="rounded-[1.5rem] border border-slate-700/70 bg-slate-950/50 p-5 shadow-soft backdrop-blur lg:sticky lg:top-8 lg:h-[calc(100vh-4rem)]">
-      <a class="text-sm font-semibold text-sky-200" href="/qa-fintech-api-python-course/platform/">← Course home</a>
+      <a class="text-sm font-semibold text-sky-200" href="/qa-fintech-api-python-course/">← Course home</a>
       <div class="mt-6 space-y-2">
         {lessons.map((item, index) => (
-          <a class:list={['block rounded-2xl border px-4 py-3 transition', item.slug === lesson.slug ? 'border-sky-300 bg-sky-400/10 text-white' : 'border-slate-700/60 bg-slate-900/40 text-slate-300 hover:border-sky-400/60']} href={`/qa-fintech-api-python-course/platform/lessons/${item.slug}/`}>
+          <a class:list={['block rounded-2xl border px-4 py-3 transition', item.slug === lesson.slug ? 'border-sky-300 bg-sky-400/10 text-white' : 'border-slate-700/60 bg-slate-900/40 text-slate-300 hover:border-sky-400/60']} href={`/qa-fintech-api-python-course/lessons/${item.slug}/`}>
             <span class="text-xs text-slate-500">{String(index + 1).padStart(2, '0')}</span>
             <p class="mt-1 font-medium">{item.title}</p>
           </a>
@@ -50,8 +50,8 @@ const next = lessons[currentIndex + 1];
       </section>
 
       <nav class="flex flex-wrap justify-between gap-3">
-        {prev ? <a class="rounded-2xl border border-slate-600 px-5 py-3 font-semibold text-slate-100 hover:border-sky-300" href={`/qa-fintech-api-python-course/platform/lessons/${prev.slug}/`}>← {prev.title}</a> : <span></span>}
-        {next ? <a class="rounded-2xl bg-sky-400 px-5 py-3 font-semibold text-slate-950 hover:bg-sky-300" href={`/qa-fintech-api-python-course/platform/lessons/${next.slug}/`}>{next.title} →</a> : <a class="rounded-2xl bg-emerald-400 px-5 py-3 font-semibold text-slate-950" href="https://github.com/safal207/qa-fintech-api-python-course">Finish on GitHub</a>}
+        {prev ? <a class="rounded-2xl border border-slate-600 px-5 py-3 font-semibold text-slate-100 hover:border-sky-300" href={`/qa-fintech-api-python-course/lessons/${prev.slug}/`}>← {prev.title}</a> : <span></span>}
+        {next ? <a class="rounded-2xl bg-sky-400 px-5 py-3 font-semibold text-slate-950 hover:bg-sky-300" href={`/qa-fintech-api-python-course/lessons/${next.slug}/`}>{next.title} →</a> : <a class="rounded-2xl bg-emerald-400 px-5 py-3 font-semibold text-slate-950" href="https://github.com/safal207/qa-fintech-api-python-course">Finish on GitHub</a>}
       </nav>
     </article>
   </main>
