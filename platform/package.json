@@ -9,7 +9,8 @@
     "preview": "astro preview",
     "lhci:mobile": "lhci autorun --config=./lighthouserc.mobile.cjs",
     "lhci:desktop": "lhci autorun --config=./lighthouserc.desktop.cjs",
-    "audit:lighthouse": "npm run build && npm run lhci:mobile && npm run lhci:desktop"
+    "lhci:summary": "node scripts/print-lighthouse-summary.mjs",
+    "audit:lighthouse": "npm run build && npm run lhci:mobile && npm run lhci:desktop && npm run lhci:summary"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.6",
