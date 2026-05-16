@@ -1,0 +1,10 @@
+{
+  "name": "QA FinTech API + Python Course",
+  "short_name": "FinTech QA",
+  "description": "Интерактивный курс по QA в финтехе: API-тестирование, Python, Pytest, CI и Allure.",
+  "start_url": "/qa-fintech-api-python-course/",
+  "display": "standalone",
+  "background_color": "#07111f",
+  "theme_color": "#07111f",
+  "lang": "ru"
+}
