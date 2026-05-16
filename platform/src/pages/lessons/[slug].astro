@@ -1,0 +1,127 @@
+---
+import CourseShell from '../../components/CourseShell.astro';
+
+const lessons = [
+  {
+    slug: '01-fintech-qa',
+    title: 'FinTech QA mindset',
+    tag: 'Risk thinking',
+    body: [
+      'В финтехе QA проверяет не только HTTP-ответ. Он проверяет денежную цепочку: операция, баланс, комиссия и повтор запроса.',
+      'Главная идея: 200 OK не означает, что деньги пользователя в безопасности.',
+    ],
+    tasks: ['Объясни риск double charge.', 'Найди в README список финтех-багов.', 'Сформулируй один баг-репорт про неверный баланс.'],
+    command: 'git clone https://github.com/safal207/qa-fintech-api-python-course.git\ncd qa-fintech-api-python-course',
+  },
+  {
+    slug: '02-local-setup',
+    title: 'Local setup',
+    tag: 'Environment',
+    body: ['Настраиваем Python-окружение и запускаем тесты локально.', 'Цель шага: получить зелёный pytest на своей машине.'],
+    tasks: ['Создай virtualenv.', 'Установи requirements.', 'Запусти pytest.'],
+    command: 'python -m venv .venv\nsource .venv/bin/activate\npip install -r requirements.txt\npytest',
+  },
+  {
+    slug: '03-sandbox-api',
+    title: 'Sandbox API',
+    tag: 'FastAPI',
+    body: ['Изучаем учебный API: health, accounts, reset и transfer.', 'Этот API нужен как тренажёр для финтех-мышления.'],
+    tasks: ['Запусти API.', 'Проверь /health.', 'Проверь /accounts/acc_alex.'],
+    command: 'uvicorn src.finpay_sandbox.api:app --reload\ncurl http://127.0.0.1:8000/health',
+  },
+  {
+    slug: '04-transfer-tests',
+    title: 'Transfer tests',
+    tag: 'Pytest',
+    body: ['Проверяем перевод денег между аккаунтами.', 'QA должен проверить баланс отправителя, баланс получателя и комиссию.'],
+    tasks: ['Открой test_transfer.py.', 'Найди проверку комиссии.', 'Найди проверку баланса после операции.'],
+    command: 'pytest tests/api/test_transfer.py -q',
+  },
+  {
+    slug: '05-idempotency',
+    title: 'Idempotency',
+    tag: 'Money safety',
+    body: ['Idempotency key защищает пользователя от двойного списания при повторном запросе.', 'Это один из ключевых финтех-паттернов для API-тестирования.'],
+    tasks: ['Найди тест idempotency.', 'Проверь, что transfer_id совпадает.', 'Проверь, что баланс не меняется второй раз.'],
+    command: 'pytest tests/api/test_transfer.py::test_same_idempotency_key_does_not_charge_twice -q',
+  },
+  {
+    slug: '06-contract-tests',
+    title: 'Contract tests',
+    tag: 'JSON Schema',
+    body: ['Контрактные тесты проверяют структуру API-ответа.', 'Они защищают клиентов от внезапных изменений полей и типов.'],
+    tasks: ['Открой tests/contract.', 'Посмотри required поля.', 'Запусти contract tests.'],
+    command: 'pytest tests/contract -q',
+  },
+  {
+    slug: '07-ci-allure',
+    title: 'CI and Allure',
+    tag: 'Automation',
+    body: ['CI показывает, что проект проверяется не только на машине автора.', 'GitHub Actions запускает pytest и собирает Allure results.'],
+    tasks: ['Открой workflow.', 'Проверь шаг Run tests.', 'Найди artifact allure-results.'],
+    command: 'pytest --alluredir=allure-results',
+  },
+  {
+    slug: '08-final-project',
+    title: 'Final project',
+    tag: 'Portfolio',
+    body: ['Финальный результат — GitHub-репозиторий студента с тестами, CI и понятным README.', 'Важно описать финтех-риски, которые покрывают тесты.'],
+    tasks: ['Сделай fork.', 'Добавь новый негативный тест.', 'Оформи README своего проекта.'],
+    command: 'git checkout -b student-final-project\npytest\ngit status',
+  },
+];
+
+export function getStaticPaths() {
+  return lessons.map((lesson) => ({ params: { slug: lesson.slug }, props: { lesson } }));
+}
+
+const { lesson } = Astro.props;
+const currentIndex = lessons.findIndex((item) => item.slug === lesson.slug);
+const prev = lessons[currentIndex - 1];
+const next = lessons[currentIndex + 1];
+---
+
+<CourseShell title={`${lesson.title} | QA FinTech Course`}>
+  <main class="mx-auto grid min-h-screen w-full max-w-7xl gap-6 px-6 py-8 lg:grid-cols-[280px_1fr] lg:px-10">
+    <aside class="rounded-[1.5rem] border border-slate-700/70 bg-slate-950/50 p-5 shadow-soft backdrop-blur lg:sticky lg:top-8 lg:h-[calc(100vh-4rem)]">
+      <a class="text-sm font-semibold text-sky-200" href="/qa-fintech-api-python-course/platform/">← Course home</a>
+      <div class="mt-6 space-y-2">
+        {lessons.map((item, index) => (
+          <a class:list={['block rounded-2xl border px-4 py-3 transition', item.slug === lesson.slug ? 'border-sky-300 bg-sky-400/10 text-white' : 'border-slate-700/60 bg-slate-900/40 text-slate-300 hover:border-sky-400/60']} href={`/qa-fintech-api-python-course/platform/lessons/${item.slug}/`}>
+            <span class="text-xs text-slate-500">{String(index + 1).padStart(2, '0')}</span>
+            <p class="mt-1 font-medium">{item.title}</p>
+          </a>
+        ))}
+      </div>
+    </aside>
+
+    <article class="space-y-6">
+      <section class="rounded-[2rem] border border-slate-700/70 bg-slate-950/50 p-8 shadow-soft backdrop-blur">
+        <p class="inline-flex rounded-full border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-200">{lesson.tag}</p>
+        <h1 class="mt-6 text-4xl font-semibold tracking-tight text-white md:text-5xl">{lesson.title}</h1>
+        <div class="mt-8 space-y-4 text-lg leading-8 text-slate-300">
+          {lesson.body.map((paragraph) => <p>{paragraph}</p>)}
+        </div>
+      </section>
+
+      <section class="grid gap-6 lg:grid-cols-[1fr_0.9fr]">
+        <div class="rounded-[1.5rem] border border-slate-700/70 bg-slate-900/60 p-6">
+          <h2 class="text-2xl font-semibold text-white">Практика</h2>
+          <ul class="mt-5 space-y-3 text-slate-300">
+            {lesson.tasks.map((task) => <li class="rounded-xl border border-slate-700/50 bg-slate-950/40 px-4 py-3">✓ {task}</li>)}
+          </ul>
+        </div>
+
+        <div class="rounded-[1.5rem] border border-slate-700/70 bg-slate-900/60 p-6">
+          <h2 class="text-2xl font-semibold text-white">Команда</h2>
+          <pre class="mt-5 overflow-x-auto rounded-2xl border border-slate-700/60 bg-slate-950 p-4 text-sm leading-7 text-sky-100"><code>{lesson.command}</code></pre>
+        </div>
+      </section>
+
+      <nav class="flex flex-wrap justify-between gap-3">
+        {prev ? <a class="rounded-2xl border border-slate-600 px-5 py-3 font-semibold text-slate-100 hover:border-sky-300" href={`/qa-fintech-api-python-course/platform/lessons/${prev.slug}/`}>← {prev.title}</a> : <span></span>}
+        {next ? <a class="rounded-2xl bg-sky-400 px-5 py-3 font-semibold text-slate-950 hover:bg-sky-300" href={`/qa-fintech-api-python-course/platform/lessons/${next.slug}/`}>{next.title} →</a> : <a class="rounded-2xl bg-emerald-400 px-5 py-3 font-semibold text-slate-950" href="https://github.com/safal207/qa-fintech-api-python-course">Finish on GitHub</a>}
+      </nav>
+    </article>
+  </main>
+</CourseShell>
