@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QA FinTech Course Platform</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">QA</div>
+        <div>
+          <h1>FinTech QA</h1>
+          <p>API + Python + Pytest</p>
+        </div>
+      </div>
+
+      <div class="progress-card">
+        <div class="progress-meta">
+          <span>Прогресс курса</span>
+          <strong id="progressText">0%</strong>
+        </div>
+        <div class="progress-bar">
+          <div id="progressFill"></div>
+        </div>
+      </div>
+
+      <nav id="moduleList" class="module-list" aria-label="Course modules"></nav>
+    </aside>
+
+    <main class="content">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Интерактивная платформа курса</p>
+          <h2 id="lessonTitle">Загрузка урока...</h2>
+          <p id="lessonSubtitle" class="subtitle"></p>
+        </div>
+        <div class="hero-actions">
+          <a class="ghost-button" href="../README.md">README</a>
+          <a class="primary-button" href="https://github.com/safal207/qa-fintech-api-python-course" target="_blank" rel="noreferrer">GitHub</a>
+        </div>
+      </section>
+
+      <section class="lesson-grid">
+        <article class="card main-card">
+          <div class="card-header">
+            <span class="pill">Шаг урока</span>
+            <button id="completeBtn" class="complete-button">Отметить пройденным</button>
+          </div>
+          <div id="lessonBody" class="lesson-body"></div>
+        </article>
+
+        <aside class="card task-card">
+          <h3>Практика</h3>
+          <ul id="taskList" class="task-list"></ul>
+        </aside>
+      </section>
+
+      <section class="card command-card">
+        <div class="card-header">
+          <div>
+            <span class="pill">Команды</span>
+            <h3>Запуск проекта</h3>
+          </div>
+          <button id="copyCommandsBtn" class="copy-button">Скопировать</button>
+        </div>
+        <pre id="commandsBlock"></pre>
+      </section>
+
+      <section class="nav-actions">
+        <button id="prevBtn" class="ghost-button">← Назад</button>
+        <button id="nextBtn" class="primary-button">Дальше →</button>
+      </section>
+    </main>
+  </div>
+
+  <script src="./course-data.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
