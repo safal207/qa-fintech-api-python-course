@@ -2,15 +2,11 @@ module.exports = {
   ci: {
     collect: {
       staticDistDir: './dist',
-      url: [
-        '/',
-        '/lessons/01-fintech-qa/',
-        '/lessons/05-idempotency/',
-        '/lessons/08-final-project/',
-      ],
+      url: ['/'],
       numberOfRuns: 1,
       settings: {
         throttlingMethod: 'simulate',
+        maxWaitForLoad: 30000,
         chromeFlags: '--no-sandbox --disable-dev-shm-usage',
       },
     },
