@@ -1,66 +1,69 @@
-# Course Outline
+# Программа курса
 
-## 1. Fintech QA basics
+## 1. Финтех-мышление QA
 
-Goal: understand how QA checks money-related user flows, not only HTTP responses.
+Цель: научиться смотреть на API не только как на HTTP-ответ, а как на денежную операцию с последствиями для пользователя.
 
-Topics:
-- fintech product risks;
-- balances and operations;
-- fees and rounding;
-- negative API cases.
+Темы:
+- продуктовые риски в fintech;
+- балансы, операции и история движения денег;
+- комиссии, округления и лимиты;
+- негативные сценарии денежных операций.
 
-## 2. API testing foundation
+## 2. База API-тестирования
 
-Goal: learn how to test REST API manually and then automate checks.
+Цель: уверенно тестировать REST API вручную и понимать, что потом автоматизировать.
 
-Topics:
-- HTTP methods;
-- status codes;
-- JSON payloads;
-- Swagger and Postman;
-- request and response validation.
+Темы:
+- HTTP-методы и статус-коды;
+- JSON-запросы и ответы;
+- Swagger и Postman;
+- проверка тела ответа, ошибок и бизнес-состояния.
 
-## 3. Python and Pytest
+## 3. Python и Pytest
 
-Goal: build a simple API test project.
+Цель: собрать понятный тестовый проект на Python.
 
-Topics:
-- pytest basics;
-- fixtures;
-- parametrization;
-- reusable API client helpers.
+Темы:
+- основы Pytest;
+- фикстуры;
+- параметризация;
+- reusable helpers для API-клиента;
+- структура тестов в репозитории.
 
-## 4. Fintech scenarios
+## 4. Финтех-сценарии
 
-Goal: test transfers, balances, fees and repeated requests.
+Цель: тестировать переводы, балансы, комиссии и повторные запросы.
 
-Practice:
-- account lookup;
-- successful transfer;
-- insufficient funds;
-- fee calculation;
-- repeated transfer with the same key.
+Практика:
+- получение аккаунта;
+- успешный перевод;
+- недостаточно средств;
+- расчёт комиссии;
+- повторный перевод с тем же idempotency key;
+- проверка, что деньги не списались дважды.
 
-## 5. Contract testing
+## 5. Контрактное тестирование
 
-Goal: check that API responses keep stable structure.
+Цель: проверять, что API сохраняет стабильную структуру ответа.
 
-Topics:
+Темы:
 - JSON Schema;
-- required fields;
-- field types;
-- backward compatibility.
+- обязательные поля;
+- типы данных;
+- запрет лишних полей;
+- обратная совместимость контракта.
 
-## 6. CI and reports
+## 6. CI и отчёты
 
-Goal: run tests automatically and collect reports.
+Цель: запускать тесты автоматически и получать артефакты для анализа.
 
-Topics:
+Темы:
 - GitHub Actions;
 - Allure results;
-- quality gates for pull requests.
+- артефакты CI;
+- quality gate для pull request.
 
-## Final project
+## Финальный проект
 
-Student result: a GitHub repository with fintech API tests, CI workflow and clear README for portfolio use.
+Результат студента: GitHub-репозиторий с fintech API tests, sandbox API, CI workflow, Allure-результатами и README, который можно использовать как портфолио-проект.

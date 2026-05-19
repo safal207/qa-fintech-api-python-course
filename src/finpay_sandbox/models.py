@@ -11,7 +11,7 @@ class Account(BaseModel):
 class TransferRequest(BaseModel):
     from_account: str
     to_account: str
-    amount: Decimal = Field(gt=0, decimal_places=2)
+    amount: Decimal = Field(decimal_places=2)
     idempotency_key: str
 
 

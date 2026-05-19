@@ -64,3 +64,18 @@ def test_transfer_fails_when_insufficient_funds(client):
 
     assert response.status_code == 409
     assert response.json()['detail']['code'] == 'INSUFFICIENT_FUNDS'
+
+
+def test_transfer_fails_with_domain_error_for_invalid_amount(client):
+    response = client.post(
+        '/transfer',
+        json={
+            'from_account': 'acc_alex',
+            'to_account': 'acc_yura',
+            'amount': '-1.00',
+            'idempotency_key': 'idem-invalid-amount-001',
+        },
+    )
+
+    assert response.status_code == 422
+    assert response.json()['detail']['code'] == 'INVALID_AMOUNT'
