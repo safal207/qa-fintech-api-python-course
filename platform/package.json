@@ -6,18 +6,21 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "lhci:mobile": "lhci autorun --config=./lighthouserc.mobile.cjs",
+    "lhci:desktop": "lhci autorun --config=./lighthouserc.desktop.cjs",
+    "lhci:summary": "node scripts/print-lighthouse-summary.mjs",
+    "audit:lighthouse": "npm run build && npm run lhci:mobile && npm run lhci:desktop && npm run lhci:summary"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.6",
-    "@astrojs/react": "^4.3.1",
     "@astrojs/tailwind": "^6.0.2",
     "@tailwindcss/typography": "^0.5.15",
     "astro": "^5.18.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@lhci/cli": "^0.15.1"
+  }
 }
