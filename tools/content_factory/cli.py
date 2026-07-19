@@ -22,8 +22,46 @@ SECTION_ALIASES = {
 LEVELS = (
     ("L1", "recall", "Объясните своими словами: {objective}"),
     ("L2", "apply", "Как вы проверите через API: {objective}"),
-    ("L3", "diagnose", "Какой дефект или пользовательский риск возникнет, если нарушено правило: {objective}"),
+    (
+        "L3",
+        "diagnose",
+        "Какой дефект или пользовательский риск возникнет, если нарушено правило: {objective}",
+    ),
+    (
+        "L4",
+        "design",
+        "Спроектируйте безопасное API-решение для цели: {objective}",
+    ),
+    (
+        "L5",
+        "production",
+        "Production-инцидент нарушил цель «{objective}». Как локализовать причину, "
+        "остановить ущерб и доказать исправление?",
+    ),
 )
+
+STEPIK_DISTRACTORS = {
+    "L1": (
+        "Достаточно запомнить HTTP-код, не связывая его с бизнес-правилом.",
+        "Это поведение полностью определяется клиентом и не требует серверной проверки.",
+    ),
+    "L2": (
+        "Проверить только успешный HTTP-статус и не сравнивать состояние системы.",
+        "Повторить запрос с новыми данными и считать любой ответ достаточным доказательством.",
+    ),
+    "L3": (
+        "Считать тайм-аут доказательством того, что операция не выполнилась.",
+        "Игнорировать идентификаторы операций, логи и итоговое состояние данных.",
+    ),
+    "L4": (
+        "Добавить автоматический retry без стабильного ключа и без бизнес-инвариантов.",
+        "Ограничить решение изменением текста ошибки в интерфейсе.",
+    ),
+    "L5": (
+        "Перезапустить сервис и закрыть инцидент без проверки денежных последствий.",
+        "Удалить спорные операции и не сохранять evidence для разбора и регрессии.",
+    ),
+}
 
 
 def _normalise_heading(value: str) -> str:
@@ -96,8 +134,88 @@ def parse_module(module_text: str, module_id: str = "module") -> dict[str, Any]:
     }
 
 
+def _expected_answer(level: str, thesis: str, module: dict[str, Any]) -> str:
+    invariant_text = "; ".join(module["invariants"]) or thesis
+
+    if level == "L1":
+        return thesis
+    if level == "L2":
+        return (
+            f"Построить запросы к {module['endpoint']} и доказать результат через "
+            f"ответ API и бизнес-инварианты. Эталонный тезис: {thesis}"
+        )
+    if level == "L3":
+        return (
+            "Связать наблюдаемый симптом с нарушенным инвариантом и риском для пользователя: "
+            f"{invariant_text}"
+        )
+    if level == "L4":
+        return (
+            f"Определить контракт {module['endpoint']}, стабильные идентификаторы, политику retry, "
+            f"переходы состояний, наблюдаемость и проверки инвариантов: {invariant_text}"
+        )
+    return (
+        "Собрать timeline и evidence по request/operation IDs, ключам повторов, логам и состоянию "
+        "данных; остановить дальнейший ущерб, выполнить reconciliation, установить корневую причину "
+        f"и закрепить исправление регрессионными тестами. Контрольные инварианты: {invariant_text}"
+    )
+
+
+def _build_api_labs(module: dict[str, Any], module_id: str) -> list[dict[str, Any]]:
+    criteria = module["invariants"] or [
+        "Результат подтверждён ответом API и состоянием системы."
+    ]
+    common = {
+        "endpoint": module["endpoint"],
+        "scenario": module["scenario"],
+        "acceptance_criteria": criteria,
+        "source_refs": module["sources"],
+    }
+    return [
+        {
+            "id": f"{module_id.upper()}-LAB-001",
+            "title": f"API-диагностика: {module['title']}",
+            "level": "L3",
+            "tasks": [
+                "Зафиксируйте начальное состояние и ожидаемые бизнес-инварианты.",
+                f"Выполните основной запрос к {module['endpoint']}.",
+                "Смоделируйте повтор, ошибку или граничное условие из сценария.",
+                "Сравните HTTP-ответ, идентификаторы операций и итоговое состояние данных.",
+                "Оформите дефект, если хотя бы один инвариант нарушен.",
+            ],
+            **common,
+        },
+        {
+            "id": f"{module_id.upper()}-LAB-L4-001",
+            "title": f"Проектирование API-защиты: {module['title']}",
+            "level": "L4",
+            "tasks": [
+                "Опишите контракт запроса, ответа и доменных ошибок.",
+                "Спроектируйте стабильные идентификаторы, retry-policy и переходы состояний.",
+                "Определите проверки конкурентных и повторных запросов.",
+                "Добавьте логи, метрики и correlation fields для доказуемой диагностики.",
+                "Сформулируйте автоматические тесты каждого бизнес-инварианта.",
+            ],
+            **common,
+        },
+        {
+            "id": f"{module_id.upper()}-LAB-L5-001",
+            "title": f"Production-инцидент: {module['title']}",
+            "level": "L5",
+            "tasks": [
+                "Постройте timeline от первого запроса до обнаружения пользовательского ущерба.",
+                "Соберите evidence: request IDs, operation IDs, ключи повторов, логи и состояние данных.",
+                "Определите безопасные меры containment без уничтожения доказательств.",
+                "Спроектируйте reconciliation и восстановление корректного состояния.",
+                "Зафиксируйте root cause, regression test и наблюдаемость после исправления.",
+            ],
+            **common,
+        },
+    ]
+
+
 def build_content_pack(module_text: str, module_id: str = "module") -> dict[str, Any]:
-    """Create a versioned content pack with questions, a lab, and answer keys."""
+    """Create a versioned content pack with questions, labs, and answer keys."""
     module = parse_module(module_text, module_id=module_id)
     questions: list[dict[str, Any]] = []
 
@@ -109,20 +227,6 @@ def build_content_pack(module_text: str, module_id: str = "module") -> dict[str,
         )
         for level, skill, template in LEVELS:
             question_id = f"{module_id.upper()}-{level}-{objective_index:03d}"
-            if level == "L1":
-                expected_answer = thesis
-            elif level == "L2":
-                expected_answer = (
-                    f"Построить запросы к {module['endpoint']} и доказать результат через "
-                    f"ответ API и бизнес-инварианты. Эталонный тезис: {thesis}"
-                )
-            else:
-                invariant_text = "; ".join(module["invariants"]) or thesis
-                expected_answer = (
-                    "Связать наблюдаемый симптом с нарушенным инвариантом и риском для пользователя: "
-                    f"{invariant_text}"
-                )
-
             questions.append(
                 {
                     "id": question_id,
@@ -130,28 +234,10 @@ def build_content_pack(module_text: str, module_id: str = "module") -> dict[str,
                     "skill": skill,
                     "topic": module["topic"],
                     "question": template.format(objective=objective),
-                    "expected_answer": expected_answer,
+                    "expected_answer": _expected_answer(level, thesis, module),
                     "source_refs": module["sources"],
                 }
             )
-
-    api_lab = {
-        "id": f"{module_id.upper()}-LAB-001",
-        "title": f"API-практикум: {module['title']}",
-        "level": "L3",
-        "endpoint": module["endpoint"],
-        "scenario": module["scenario"],
-        "tasks": [
-            "Зафиксируйте начальное состояние и ожидаемые бизнес-инварианты.",
-            f"Выполните основной запрос к {module['endpoint']}.",
-            "Смоделируйте повтор, ошибку или граничное условие из сценария.",
-            "Сравните HTTP-ответ, идентификаторы операций и итоговое состояние данных.",
-            "Оформите дефект, если хотя бы один инвариант нарушен.",
-        ],
-        "acceptance_criteria": module["invariants"]
-        or ["Результат подтверждён ответом API и состоянием системы."],
-        "source_refs": module["sources"],
-    }
 
     return {
         "schema_version": "0.1.0",
@@ -161,7 +247,7 @@ def build_content_pack(module_text: str, module_id: str = "module") -> dict[str,
             "topic": module["topic"],
         },
         "questions": questions,
-        "api_labs": [api_lab],
+        "api_labs": _build_api_labs(module, module_id),
         "answers": [
             {
                 "question_id": question["id"],
@@ -205,23 +291,30 @@ def _answer_key_markdown(pack: dict[str, Any]) -> str:
 
 
 def _api_lab_markdown(pack: dict[str, Any]) -> str:
-    lab = pack["api_labs"][0]
-    lines = [
-        f"# {lab['title']}",
-        "",
-        f"**Уровень:** {lab['level']}",
-        f"**Endpoint:** `{lab['endpoint']}`",
-        "",
-        "## Сценарий",
-        "",
-        lab["scenario"],
-        "",
-        "## Задание",
-        "",
-    ]
-    lines.extend(f"{index}. {task}" for index, task in enumerate(lab["tasks"], start=1))
-    lines.extend(["", "## Критерии приёмки", ""])
-    lines.extend(f"- {criterion}" for criterion in lab["acceptance_criteria"])
+    lines = [f"# API-практикумы: {pack['module']['title']}", ""]
+    for lab in pack["api_labs"]:
+        lines.extend(
+            [
+                f"## {lab['id']} · {lab['level']}",
+                "",
+                f"### {lab['title']}",
+                "",
+                f"**Endpoint:** `{lab['endpoint']}`",
+                "",
+                "### Сценарий",
+                "",
+                lab["scenario"],
+                "",
+                "### Задание",
+                "",
+            ]
+        )
+        lines.extend(
+            f"{index}. {task}" for index, task in enumerate(lab["tasks"], start=1)
+        )
+        lines.extend(["", "### Критерии приёмки", ""])
+        lines.extend(f"- {criterion}" for criterion in lab["acceptance_criteria"])
+        lines.append("")
     return "\n".join(lines).rstrip() + "\n"
 
 
@@ -236,9 +329,28 @@ def _quiz_csv(pack: dict[str, Any]) -> str:
         writer.writerow(
             {
                 key: question[key]
-                for key in ("id", "level", "skill", "topic", "question", "expected_answer")
+                for key in (
+                    "id",
+                    "level",
+                    "skill",
+                    "topic",
+                    "question",
+                    "expected_answer",
+                )
             }
         )
+    return stream.getvalue()
+
+
+def _stepik_csv(pack: dict[str, Any]) -> str:
+    """Create Stepik's test-bank CSV: text/option rows with y/n correctness."""
+    stream = StringIO(newline="")
+    writer = csv.writer(stream, lineterminator="\n")
+    for question in pack["questions"]:
+        writer.writerow(["text", question["question"], "-"])
+        writer.writerow(["option", question["expected_answer"], "y"])
+        for distractor in STEPIK_DISTRACTORS[question["level"]]:
+            writer.writerow(["option", distractor, "n"])
     return stream.getvalue()
 
 
@@ -246,8 +358,8 @@ def export_content_pack(
     pack: dict[str, Any], output_dir: Path, formats: set[str] | None = None
 ) -> list[Path]:
     """Write selected publication formats and return the created paths."""
-    selected = formats or {"json", "markdown", "csv"}
-    unknown = selected - {"json", "markdown", "csv"}
+    selected = formats or {"json", "markdown", "csv", "stepik"}
+    unknown = selected - {"json", "markdown", "csv", "stepik"}
     if unknown:
         raise ValueError(f"Unsupported formats: {', '.join(sorted(unknown))}")
 
@@ -256,7 +368,9 @@ def export_content_pack(
 
     if "json" in selected:
         path = output_dir / "content-pack.json"
-        path.write_text(json.dumps(pack, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        path.write_text(
+            json.dumps(pack, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
         created.append(path)
 
     if "markdown" in selected:
@@ -275,6 +389,11 @@ def export_content_pack(
         path.write_text(_quiz_csv(pack), encoding="utf-8")
         created.append(path)
 
+    if "stepik" in selected:
+        path = output_dir / "stepik-question-bank.csv"
+        path.write_text(_stepik_csv(pack), encoding="utf-8-sig")
+        created.append(path)
+
     return created
 
 
@@ -284,8 +403,8 @@ def main() -> int:
     parser.add_argument("--output", required=True, type=Path, help="Output directory")
     parser.add_argument(
         "--formats",
-        default="json,markdown,csv",
-        help="Comma-separated list: json,markdown,csv",
+        default="json,markdown,csv,stepik",
+        help="Comma-separated list: json,markdown,csv,stepik",
     )
     args = parser.parse_args()
 
