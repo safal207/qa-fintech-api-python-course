@@ -62,10 +62,19 @@ def build_course_content(
     _safe_recreate_output(output_dir)
 
     module_entries: list[dict[str, Any]] = []
+    seen_module_ids: dict[str, Path] = {}
     for module_path in module_paths:
         relative_source = module_path.relative_to(modules_dir)
         module_key = relative_source.with_suffix("").as_posix().replace("/", "-")
         module_id = _slugify(module_key)
+        previous_source = seen_module_ids.get(module_id)
+        if previous_source is not None:
+            raise ValueError(
+                f"Module ID collision for '{module_id}': "
+                f"{previous_source.as_posix()} and {relative_source.as_posix()}"
+            )
+        seen_module_ids[module_id] = relative_source
+
         source_bytes = module_path.read_bytes()
         module_text = source_bytes.decode("utf-8")
         pack = build_content_pack(module_text, module_id=module_id)
