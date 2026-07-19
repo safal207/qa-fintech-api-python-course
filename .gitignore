@@ -6,5 +6,6 @@ __pycache__/
 *.pyc
 allure-results/
 allure-report/
+generated/
 .env
 .DS_Store

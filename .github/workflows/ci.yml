@@ -26,6 +26,19 @@ jobs:
       - name: Run tests with Allure results
         run: pytest --alluredir=allure-results
 
+      - name: Build all course content bundles
+        run: |
+          python -m tools.content_factory.build_all \
+            --modules-dir content/modules \
+            --output generated/course-content
+
+      - name: Upload course content bundles
+        uses: actions/upload-artifact@v4
+        with:
+          name: course-content-bundles
+          path: generated/course-content
+          if-no-files-found: error
+
       - name: Upload Allure results
         uses: actions/upload-artifact@v4
         with:
