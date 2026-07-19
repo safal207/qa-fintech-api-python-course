@@ -71,3 +71,16 @@ def test_export_content_pack_creates_publication_bundle(tmp_path: Path) -> None:
         encoding="utf-8"
     )
     assert "expected_answer" in (tmp_path / "quiz.csv").read_text(encoding="utf-8")
+
+
+def test_repository_idempotency_module_is_publishable(tmp_path: Path) -> None:
+    module_path = Path("content/modules/idempotency.md")
+    pack = build_content_pack(
+        module_path.read_text(encoding="utf-8"), module_id="idempotency"
+    )
+
+    created = export_content_pack(pack, tmp_path)
+
+    assert len(pack["questions"]) == 9
+    assert len(pack["api_labs"][0]["acceptance_criteria"]) == 4
+    assert len(created) == 5
