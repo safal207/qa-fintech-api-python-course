@@ -81,3 +81,12 @@ def test_build_course_content_rejects_empty_module_directory(tmp_path: Path) -> 
 
     with pytest.raises(ValueError, match="No Markdown modules found"):
         build_course_content(modules_dir, tmp_path / "generated")
+
+
+def test_build_course_content_rejects_colliding_module_ids(tmp_path: Path) -> None:
+    modules_dir = tmp_path / "modules"
+    _write_module(modules_dir / "api-retry.md", "Flat module")
+    _write_module(modules_dir / "api" / "retry.md", "Nested module")
+
+    with pytest.raises(ValueError, match="Module ID collision for 'api-retry'"):
+        build_course_content(modules_dir, tmp_path / "generated")
