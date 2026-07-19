@@ -15,6 +15,7 @@
 
 - Изучить программу: [docs/COURSE_OUTLINE.md](docs/COURSE_OUTLINE.md)
 - Посмотреть позиционирование курса: [docs/POSITIONING.md](docs/POSITIONING.md)
+- Собрать контент-пакет недели: [docs/CONTENT_FACTORY.md](docs/CONTENT_FACTORY.md)
 - Запустить sandbox API локально: `uvicorn src.finpay_sandbox.api:app --reload`
 - Прогнать автотесты: `python -m pytest`
 
@@ -114,16 +115,23 @@ allure serve allure-results
 
 ```text
 .
+├── content/
+│   └── modules/
 ├── docs/
 │   ├── COURSE_OUTLINE.md
+│   ├── CONTENT_FACTORY.md
 │   ├── ROADMAP.md
 │   └── POSITIONING.md
+├── schemas/
+│   └── content-pack.schema.json
+├── tools/content_factory/
 ├── src/finpay_sandbox/
 │   ├── api.py
 │   ├── domain.py
 │   └── models.py
 ├── tests/
 │   ├── api/
+│   ├── content_factory/
 │   ├── contract/
 │   └── domain/
 ├── .github/workflows/ci.yml
