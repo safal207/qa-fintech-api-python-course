@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/schemas/course-content-manifest.schema.json",
+  "title": "Course Content Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "status",
+    "module_count",
+    "ready_count",
+    "not_ready_count",
+    "modules"
+  ],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "status": {"enum": ["READY", "NOT_READY"]},
+    "module_count": {"type": "integer", "minimum": 1},
+    "ready_count": {"type": "integer", "minimum": 0},
+    "not_ready_count": {"type": "integer", "minimum": 0},
+    "modules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title",
+          "source",
+          "output",
+          "status",
+          "source_sha256",
+          "content_pack_sha256",
+          "question_count",
+          "api_lab_count",
+          "files"
+        ],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "title": {"type": "string", "minLength": 1},
+          "source": {"type": "string", "pattern": "\\.md$"},
+          "output": {"type": "string", "minLength": 1},
+          "status": {"enum": ["READY", "NOT_READY"]},
+          "source_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "content_pack_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "question_count": {"type": "integer", "minimum": 1},
+          "api_lab_count": {"type": "integer", "minimum": 1},
+          "files": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 1}
+          }
+        }
+      }
+    }
+  }
+}
