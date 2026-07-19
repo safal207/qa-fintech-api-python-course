@@ -214,8 +214,156 @@ def _build_api_labs(module: dict[str, Any], module_id: str) -> list[dict[str, An
     ]
 
 
+def _build_homework(module: dict[str, Any], module_id: str) -> dict[str, Any]:
+    invariant_text = "; ".join(module["invariants"]) or (
+        "Результат подтверждён ответом API и состоянием системы."
+    )
+    return {
+        "id": f"{module_id.upper()}-HW-001",
+        "title": f"Домашнее задание: {module['title']}",
+        "level": "L4",
+        "scenario": module["scenario"],
+        "deliverables": [
+            "Короткий test plan с позитивными, негативными, retry и конкурентными сценариями.",
+            f"Набор воспроизводимых API-проверок для {module['endpoint']}.",
+            "Автоматические pytest-тесты минимум для одного позитивного и двух риск-сценариев.",
+            "Evidence-пакет: запросы, ответы, идентификаторы операций и итоговое состояние данных.",
+            "Краткий вывод: найденный риск, нарушенный инвариант и предлагаемая защита.",
+        ],
+        "acceptance_criteria": [
+            f"Проверены бизнес-инварианты: {invariant_text}",
+            "Повторный запуск тестов даёт воспроизводимый результат.",
+            "Каждый вывод связан с наблюдаемым evidence, а не только с HTTP-статусом.",
+            "Ошибки и ограничения решения описаны явно.",
+        ],
+        "estimated_minutes": 90,
+        "source_refs": module["sources"],
+    }
+
+
+def _build_rubric(module: dict[str, Any], module_id: str) -> dict[str, Any]:
+    invariant_text = "; ".join(module["invariants"]) or "инварианты модуля"
+    criteria = [
+        {
+            "id": "contract",
+            "title": "Контракт и тест-дизайн",
+            "max_points": 20,
+            "full_credit": (
+                f"Покрыты контракт {module['endpoint']}, позитивные, негативные и граничные сценарии."
+            ),
+            "partial_credit": "Есть основные проверки, но отсутствует часть ошибок или границ.",
+            "zero_credit": "Проверяется только один успешный запрос.",
+        },
+        {
+            "id": "invariants",
+            "title": "Бизнес-инварианты",
+            "max_points": 25,
+            "full_credit": f"Каждый вывод проверяет и доказывает: {invariant_text}.",
+            "partial_credit": "Инварианты названы, но не все подтверждены состоянием системы.",
+            "zero_credit": "Оценка ограничена HTTP-кодами и полями ответа.",
+        },
+        {
+            "id": "resilience",
+            "title": "Retry, ошибки и конкуренция",
+            "max_points": 20,
+            "full_credit": (
+                "Проверены timeout/retry, повторные и конкурентные запросы с устойчивыми идентификаторами."
+            ),
+            "partial_credit": "Проверен один риск-сценарий без полной цепочки последствий.",
+            "zero_credit": "Риск повторного выполнения не рассматривается.",
+        },
+        {
+            "id": "evidence",
+            "title": "Evidence и воспроизводимость",
+            "max_points": 20,
+            "full_credit": (
+                "Сохранены запросы, ответы, IDs и состояние данных; шаги можно повторить независимо."
+            ),
+            "partial_credit": "Есть часть доказательств, но не хватает состояния или идентификаторов.",
+            "zero_credit": "Выводы нельзя воспроизвести или проверить.",
+        },
+        {
+            "id": "analysis",
+            "title": "Анализ риска и коммуникация",
+            "max_points": 15,
+            "full_credit": (
+                "Риск описан через влияние на пользователя, root cause/гипотезу и конкретную защиту."
+            ),
+            "partial_credit": "Дефект описан технически, но влияние или защита раскрыты слабо.",
+            "zero_credit": "Нет связного вывода и следующего действия.",
+        },
+    ]
+    return {
+        "id": f"{module_id.upper()}-RUBRIC-001",
+        "title": f"Рубрика оценивания: {module['title']}",
+        "total_points": sum(item["max_points"] for item in criteria),
+        "criteria": criteria,
+        "source_refs": module["sources"],
+    }
+
+
+def _build_publication_readiness(pack: dict[str, Any]) -> dict[str, Any]:
+    question_levels = {question["level"] for question in pack["questions"]}
+    lab_levels = {lab["level"] for lab in pack["api_labs"]}
+    all_source_refs = all(
+        item["source_refs"]
+        for item in [*pack["questions"], *pack["api_labs"], pack["homework"], pack["rubric"]]
+    )
+    raw_checks = [
+        (
+            "sources",
+            all_source_refs,
+            "У всех вопросов, практикумов, домашнего задания и рубрики есть source_refs.",
+        ),
+        (
+            "levels",
+            question_levels == {"L1", "L2", "L3", "L4", "L5"},
+            "Банк вопросов покрывает уровни L1–L5.",
+        ),
+        (
+            "labs",
+            lab_levels == {"L3", "L4", "L5"},
+            "Сформированы диагностический, проектный и production-практикумы.",
+        ),
+        (
+            "answers",
+            len(pack["answers"]) == len(pack["questions"]),
+            "Для каждого вопроса существует эталонный ответ.",
+        ),
+        (
+            "homework",
+            len(pack["homework"]["deliverables"]) >= 4,
+            "Домашнее задание содержит проверяемые артефакты сдачи.",
+        ),
+        (
+            "rubric",
+            pack["rubric"]["total_points"] == 100,
+            "Рубрика имеет прозрачную шкалу из 100 баллов.",
+        ),
+    ]
+    checks = [
+        {
+            "id": check_id,
+            "status": "PASS" if passed else "FAIL",
+            "description": description,
+        }
+        for check_id, passed, description in raw_checks
+    ]
+    ready = all(check["status"] == "PASS" for check in checks)
+    return {
+        "status": "READY" if ready else "NOT_READY",
+        "checks": checks,
+        "manual_review": [
+            "Сверить фактическую точность с исходным модулем и API-контрактом.",
+            "Проверить Stepik-дистракторы перед публикацией.",
+            "Запустить API-практикумы и эталонные тесты против sandbox.",
+            "Отдельно принять L4/L5 ответы, где возможны несколько сильных решений.",
+        ],
+    }
+
+
 def build_content_pack(module_text: str, module_id: str = "module") -> dict[str, Any]:
-    """Create a versioned content pack with questions, labs, and answer keys."""
+    """Create a versioned content pack with questions, labs, homework, and assessment."""
     module = parse_module(module_text, module_id=module_id)
     questions: list[dict[str, Any]] = []
 
@@ -239,7 +387,7 @@ def build_content_pack(module_text: str, module_id: str = "module") -> dict[str,
                 }
             )
 
-    return {
+    pack = {
         "schema_version": "0.1.0",
         "module": {
             "id": module["module_id"],
@@ -255,7 +403,11 @@ def build_content_pack(module_text: str, module_id: str = "module") -> dict[str,
             }
             for question in questions
         ],
+        "homework": _build_homework(module, module_id),
+        "rubric": _build_rubric(module, module_id),
     }
+    pack["publication_readiness"] = _build_publication_readiness(pack)
+    return pack
 
 
 def _question_bank_markdown(pack: dict[str, Any]) -> str:
@@ -318,6 +470,71 @@ def _api_lab_markdown(pack: dict[str, Any]) -> str:
     return "\n".join(lines).rstrip() + "\n"
 
 
+def _homework_markdown(pack: dict[str, Any]) -> str:
+    homework = pack["homework"]
+    lines = [
+        f"# {homework['title']}",
+        "",
+        f"**ID:** `{homework['id']}`",
+        f"**Уровень:** {homework['level']}",
+        f"**Оценочное время:** {homework['estimated_minutes']} минут",
+        "",
+        "## Сценарий",
+        "",
+        homework["scenario"],
+        "",
+        "## Что сдать",
+        "",
+    ]
+    lines.extend(
+        f"{index}. {deliverable}"
+        for index, deliverable in enumerate(homework["deliverables"], start=1)
+    )
+    lines.extend(["", "## Критерии приёмки", ""])
+    lines.extend(f"- {criterion}" for criterion in homework["acceptance_criteria"])
+    return "\n".join(lines).rstrip() + "\n"
+
+
+def _rubric_markdown(pack: dict[str, Any]) -> str:
+    rubric = pack["rubric"]
+    lines = [
+        f"# {rubric['title']}",
+        "",
+        f"**Всего:** {rubric['total_points']} баллов",
+        "",
+    ]
+    for criterion in rubric["criteria"]:
+        lines.extend(
+            [
+                f"## {criterion['title']} — {criterion['max_points']} баллов",
+                "",
+                f"- **Полный балл:** {criterion['full_credit']}",
+                f"- **Частичный балл:** {criterion['partial_credit']}",
+                f"- **0 баллов:** {criterion['zero_credit']}",
+                "",
+            ]
+        )
+    return "\n".join(lines).rstrip() + "\n"
+
+
+def _publication_checklist_markdown(pack: dict[str, Any]) -> str:
+    readiness = pack["publication_readiness"]
+    lines = [
+        f"# Проверка готовности к публикации: {pack['module']['title']}",
+        "",
+        f"**Структурный статус:** {readiness['status']}",
+        "",
+        "## Автоматические проверки",
+        "",
+    ]
+    for check in readiness["checks"]:
+        marker = "x" if check["status"] == "PASS" else " "
+        lines.append(f"- [{marker}] `{check['id']}` — {check['description']}")
+    lines.extend(["", "## Ручная проверка перед публикацией", ""])
+    lines.extend(f"- [ ] {item}" for item in readiness["manual_review"])
+    return "\n".join(lines).rstrip() + "\n"
+
+
 def _quiz_csv(pack: dict[str, Any]) -> str:
     stream = StringIO(newline="")
     writer = csv.DictWriter(
@@ -337,6 +554,34 @@ def _quiz_csv(pack: dict[str, Any]) -> str:
                     "question",
                     "expected_answer",
                 )
+            }
+        )
+    return stream.getvalue()
+
+
+def _rubric_csv(pack: dict[str, Any]) -> str:
+    stream = StringIO(newline="")
+    writer = csv.DictWriter(
+        stream,
+        fieldnames=[
+            "id",
+            "criterion",
+            "max_points",
+            "full_credit",
+            "partial_credit",
+            "zero_credit",
+        ],
+    )
+    writer.writeheader()
+    for criterion in pack["rubric"]["criteria"]:
+        writer.writerow(
+            {
+                "id": criterion["id"],
+                "criterion": criterion["title"],
+                "max_points": criterion["max_points"],
+                "full_credit": criterion["full_credit"],
+                "partial_credit": criterion["partial_credit"],
+                "zero_credit": criterion["zero_credit"],
             }
         )
     return stream.getvalue()
@@ -378,6 +623,9 @@ def export_content_pack(
             "question-bank.md": _question_bank_markdown(pack),
             "api-lab.md": _api_lab_markdown(pack),
             "answer-key.md": _answer_key_markdown(pack),
+            "homework.md": _homework_markdown(pack),
+            "assessment-rubric.md": _rubric_markdown(pack),
+            "publication-checklist.md": _publication_checklist_markdown(pack),
         }
         for filename, content in markdown_files.items():
             path = output_dir / filename
@@ -385,9 +633,14 @@ def export_content_pack(
             created.append(path)
 
     if "csv" in selected:
-        path = output_dir / "quiz.csv"
-        path.write_text(_quiz_csv(pack), encoding="utf-8")
-        created.append(path)
+        csv_files = {
+            "quiz.csv": _quiz_csv(pack),
+            "assessment-rubric.csv": _rubric_csv(pack),
+        }
+        for filename, content in csv_files.items():
+            path = output_dir / filename
+            path.write_text(content, encoding="utf-8")
+            created.append(path)
 
     if "stepik" in selected:
         path = output_dir / "stepik-question-bank.csv"
